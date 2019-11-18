@@ -54,13 +54,13 @@ create table Category(
 )
 
 create table Car(
-	vin varchar(7) Primary Key,
-	manufacturer_company varchar(255) not null,
-	color varchar(255) not null,
-	model varchar(255) not null,
-	purchase_date date not null,
-	cat_id int NOT NULL 
-	constraint fkcat_id foreign key (cat_id) references Category(cat_id)
+vin char(17) Primary Key,
+manufacturer_company varchar(255) not null,
+color varchar(255) not null,
+model varchar(255) not null,
+purchase_date date not null,
+cat_id int NOT NULL
+constraint fkcat_id foreign key (cat_id) references Category(cat_id)
 )
 
 create table Payment(
@@ -94,18 +94,18 @@ create table PhoneNumber(
 )
 
 create table Rental(
-	rental_id int IDENTITY(1,1) Primary Key,
-	vin varchar(7) NOT NULL,
-	start_date date not null default getdate(),
-	end_date date,
-	verification_number int NOT NULL,
-	starts_loc integer not null,
-	ends_loc integer 
-	constraint fkvin foreign key (vin) references Car(vin),
-	constraint fkverifn foreign key (verification_number) references Payment(verification_number),
-	constraint startsloc foreign key (starts_loc) references Location(loc_id),
-	constraint endsloc foreign key (ends_loc) references Location(loc_id),
-	constraint startenddate check (start_date < end_date)
+rental_id int IDENTITY(1,1) Primary Key,
+vin char(17) NOT NULL,
+start_date date not null default getdate(),
+end_date date,
+verification_number int NOT NULL,
+starts_loc integer not null,
+ends_loc integer
+constraint fkvin foreign key (vin) references Car(vin),
+constraint fkverifn foreign key (verification_number) references Payment(verification_number),
+constraint startsloc foreign key (starts_loc) references Location(loc_id),
+constraint endsloc foreign key (ends_loc) references Location(loc_id),
+constraint startenddate check (start_date < end_date)
 )
 
 
@@ -157,20 +157,64 @@ values ('Thanasis', 'Dimitriou', '1994-03-07', 5),
 	   ('Eleni', 'Ioannou', '1998-06-24', 10),
 	   ('Chrysi', 'Galata', '1989-07-9', 8)
 
-insert into Category(name, description)
-values ('')
+insert into Category(name,description) Values
+('Micro Car','The smallest car'),
+('Hatchback','For Families'),
+('Cabrio','Cars witout roof'),
+('Coupe','Sport Cars with rear roofline and two doors'),
+('SUV','Sports Utility Vehide');
+
+select * from Category;
+
+insert into Car Values
+('1234K67G90785T380', 'Toyota','Green','Toyota iQ', '2003-07-07',1),
+('1234J67L00345I789', 'Smart' , 'Red', 'Smart ForTwo', '2010-01-13',1),
+('2134P67S90356R789', 'Volkswagen', 'Blue', 'Volkswagen Golf', '2009-08-04',2),
+('2134I67O09234H654', 'Ford', 'White', 'Ford Focus', '2005-05-21', 2),
+('2134P57B98894F748', 'Audi', 'Black', 'Audi A3', '2010-03-27' ,2),
+('3214K67P90345D690', 'Mazda', 'Red', 'Mazda MX-5', '2004-11-17' ,3),
+('3214Y76P80456F780', 'BMW', 'Blue', 'BMW Z4', '2008-09-29' ,3),
+('3215U89L90345G460', 'Mercedes-Benz', 'Black','Mercedes-Benz SLK', '2006-06-15',3),
+('4099K35O38956K790', 'Opel', 'Yellow', 'Opel Astra GTC', '2007-12-14' ,4),
+('4000L90I97568X456', 'Volkswagen', 'Brown', 'Volkswagen Scirocco', '2003-03-15' ,4),
+('5875T67J78456D456', 'BMW', 'Gray', 'BMW X3', '2007-09-27' ,5),
+('5875Y78U78900H890', 'Porsche', 'Black', 'Porsche Cayenne', '2003-08-17' ,5),
+('5890U78Y89856P759', 'Land Rover','Black','Land Rover Range Rover', '2002-07-07',5);
+
+Select * from Car;
+
+insert into Location(man_fname,man_lname,postal_code,street_name,street_number,city) Values
+('Maria', 'Papa', 50219, 'Fillipou', '28' ,'Pella'),
+('Manos', 'Petrou', 10671, 'Akadimias', '145', 'Athina'),
+('Athanasios' , 'Makris', 84500 ,'Pavlou Mela', '34' , 'Andros'),
+('Anna', 'Sali', 10671, 'Skoufa', '28' ,'Athina');
+
+select * from Location;
+
+insert into PhoneNumber Values
+(2384067345,1),
+(2384067349,1),
+(2107896306,2),
+(2107898756,2),
+(2107856423,2),
+(2751000097,3),
+(2107956734,4),
+(2107967894,4);
+
+select * from PhoneNumber;
+
 
 use DB30
-select * from Location
+select * from Location;
 
-drop table Rental
-drop table PhoneNumber
-drop table Location
-drop table Payment
-drop table Car
-drop table Category
-drop table Driver
-drop table Retail_Customer
-drop table Corporate_Customer
-drop table Customer
-drop table Region
+drop table Rental;
+drop table PhoneNumber;
+drop table Location;
+drop table Payment;
+drop table Car;
+drop table Category;
+drop table Driver;
+drop table Retail_Customer;
+drop table Corporate_Customer;
+drop table Customer;
+drop table Region;
