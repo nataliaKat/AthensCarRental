@@ -1,94 +1,102 @@
-
 create table Region(
 	reg_id integer identity(10024,1),
-	name varchar(100),
-	population integer,
-	average_revenue real,
-	primary key(reg_id)
+	name varchar(100) not null,
+	population integer not null,
+	average_revenue real not null,
+	primary key(reg_id),
+	constraint pos_pop check (population > 0),
+	constraint pos_rev check (average_revenue > 0)
 )
 
 create table Customer(
 	customer_id integer identity(1,1),
-	first_name varchar(100),
-	last_name varchar(100),
-	address varchar(150),
-	phonenumber bigint,
+	first_name varchar(100) not null,
+	last_name varchar(100) not null,
+	address varchar(150) not null,
+	phonenumber bigint not null,
 	reg_id integer not null,
 	primary key(customer_id),
-	constraint fk_regid foreign key (reg_id) references Region(reg_id) 
+	constraint fk_regid foreign key (reg_id) references Region(reg_id),
+	constraint pos_phonenumber check (phonenumber > 0) 
 )
 
 
 
 create table Corporate_Customer(
 	customer_id integer not null,
-	AFM bigint,
-	discount_percent real
+	AFM bigint not null,
+	discount_percent real not null
 	primary key (customer_id),
-	constraint fk_custidcor foreign key (customer_id) references Customer(customer_id)
+	constraint fk_custidcor foreign key (customer_id) references Customer(customer_id),
+	constraint pos_afm check (AFM > 0),
+	constraint pos_perc check (discount_percent >= 0)
 )
 
 create table Retail_Customer(
 	customer_id integer not null,
-	date_of_birth date,
+	date_of_birth date not null,
 	primary key (customer_id),
 	constraint fk_custidret foreign key (customer_id) references Customer(customer_id)
 )
 
 create table Driver(
-	first_name varchar(100),
-	last_name varchar(100),
-	dob date,
+	first_name varchar(100) not null,
+	last_name varchar(100) not null,
+	dob date not null,
 	customer_id integer not null
 	primary key (first_name, last_name, customer_id)
 	constraint fk_custiddri foreign key (customer_id) references Retail_Customer(customer_id)
 )
 create table Category(
 	cat_id int IDENTITY(1,1) Primary Key,
-	name varchar(255),
-	description varchar (255)
+	name varchar(255) not null,
+	description varchar (255) not null
 )
 
 create table Car(
 	vin varchar(7) Primary Key,
-	manufacturer_company varchar(255),
-	color varchar(255),
-	model varchar(255),
-	purchase_date date,
+	manufacturer_company varchar(255) not null,
+	color varchar(255) not null,
+	model varchar(255) not null,
+	purchase_date date not null,
 	cat_id int NOT NULL 
 	constraint fkcat_id foreign key (cat_id) references Category(cat_id)
 )
 
 create table Payment(
 	verification_number int IDENTITY(200104,1) Primary Key,
-	cost float(24),
-	date date,
-	credit_card_number int,
-	cr_card_exp_date date
+	cost float(24) not null,
+	pdate date not null,
+	credit_card_number int not null,
+	cr_card_exp_date date not null,
+	constraint pos_cost check (cost >= 0.0)
 )
 
 create table Location(
 	loc_id integer identity(1,1),
-	man_fname varchar(50),
-	man_lname varchar(60),
-	postal_code integer,
-	street_name varchar(100),
-	street_number integer,
-	city varchar(50)
+	man_fname varchar(50) not null,
+	man_lname varchar(60) not null,
+	postal_code integer not null,
+	street_name varchar(100) not null,
+	street_number integer not null,
+	city varchar(50) not null
 	primary key(loc_id),
+	constraint pos_code check (postal_code > 0),
+	constraint pos_snumb check (street_number > 0)
 )
 
 create table PhoneNumber(
-	phone bigint, 
-	loc_id integer
+	phone bigint not null, 
+	loc_id integer not null
 	primary key(phone)
-	constraint fkloc_id foreign key (loc_id) references Location(loc_id)
+	constraint fkloc_id foreign key (loc_id) references Location(loc_id),
+	constraint pos_phone check (phone > 0)
 )
 
 create table Rental(
 	rental_id int IDENTITY(1,1) Primary Key,
 	vin varchar(7) NOT NULL,
-	start_date date,
+	start_date date not null default getdate(),
 	end_date date,
 	verification_number int NOT NULL,
 	starts_loc integer not null,
@@ -96,7 +104,8 @@ create table Rental(
 	constraint fkvin foreign key (vin) references Car(vin),
 	constraint fkverifn foreign key (verification_number) references Payment(verification_number),
 	constraint startsloc foreign key (starts_loc) references Location(loc_id),
-	constraint endsloc foreign key (ends_loc) references Location(loc_id)
+	constraint endsloc foreign key (ends_loc) references Location(loc_id),
+	constraint startenddate check (start_date < end_date)
 )
 
 
@@ -152,10 +161,10 @@ insert into Category(name, description)
 values ('')
 
 use DB30
-
+select * from Location
 
 drop table Rental
-drop table Phone_Number
+drop table PhoneNumber
 drop table Location
 drop table Payment
 drop table Car
