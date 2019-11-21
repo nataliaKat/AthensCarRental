@@ -29,7 +29,7 @@ create table Corporate_Customer(
 	primary key (customer_id),
 	constraint fk_custidcor foreign key (customer_id) references Customer(customer_id),
 	constraint pos_afm check (AFM > 0),
-	constraint pos_perc check (discount_percent >= 0)
+	constraint pos_perc check (discount_percent >= 0) 
 )
 
 create table Retail_Customer(
@@ -54,13 +54,13 @@ create table Category(
 )
 
 create table Car(
-vin char(17) Primary Key,
-manufacturer_company varchar(255) not null,
-color varchar(255) not null,
-model varchar(255) not null,
-purchase_date date not null,
-cat_id int NOT NULL
-constraint fkcat_id foreign key (cat_id) references Category(cat_id)
+	vin char(17) Primary Key,
+	manufacturer_company varchar(255) not null,
+	color varchar(255) not null,
+	model varchar(255) not null,
+	purchase_date date not null,
+	cat_id int NOT NULL
+	constraint fkcat_id foreign key (cat_id) references Category(cat_id)
 )
 
 create table Payment(
@@ -69,8 +69,10 @@ create table Payment(
 	pdate date not null,
 	credit_card_number int not null,
 	cr_card_exp_date date not null,
-	constraint pos_cost check (cost >= 0.0)
+	constraint pos_cost check (cost >= 0.0),
+	constraint pdate_exp_date check (cr_card_exp_date > pdate)
 )
+
 
 create table Location(
 	loc_id integer identity(1,1),
@@ -95,18 +97,22 @@ create table PhoneNumber(
 
 create table Rental(
 	rental_id int IDENTITY(1,1) Primary Key,
-	vin varchar(7) NOT NULL,
+	customer_id int not null,
+	vin char(17) NOT NULL,
 	start_date datetime not null default getdate(),
 	end_date datetime,
-	verification_number int NOT NULL,
+	verification_number int unique NOT NULL,
 	starts_loc integer not null,
 	ends_loc integer 
+	constraint custid foreign key (customer_id) references Customer(customer_id),
 	constraint fkvin foreign key (vin) references Car(vin),
 	constraint fkverifn foreign key (verification_number) references Payment(verification_number),
 	constraint startsloc foreign key (starts_loc) references Location(loc_id),
 	constraint endsloc foreign key (ends_loc) references Location(loc_id),
 	constraint startenddate check (start_date < end_date)
 )
+
+delete from customer where customer_id = 1
 
 /*INSERTS*/
 insert into Region(name, population, average_revenue)
@@ -150,7 +156,7 @@ values (4, '1974-12-01'),
 	   (8, '1994-01-01'),
 	   (10, '1984-05-29'),
 	   (11, '1982-10-15'),
-	   (14, '1982-10-15')
+	   (12, '1982-10-15')
 
 insert into Driver(first_name, last_name, dob, customer_id)
 values ('Thanasis', 'Dimitriou', '1994-03-07', 5),
@@ -215,7 +221,8 @@ insert into Payment(cost,pdate,credit_card_number,cr_card_exp_date)
                 (500,'09-09-2010',3495098,'05-08-2013'),
                 (300,'06-15-2010',8900238,'06-07-2014'),
                 (700,'09-30-2010',903920,'06-08-2014'),
-                (2500,'07-12-2010',9709453,'04-12-2022');
+                (2500,'07-12-2010',9709453,'04-12-2022'),
+				(170.8, '09-09-2014', 9667878, '17-12-2018');
 
 
 insert into Rental(customer_id,vin,start_date,end_date,verification_number,starts_loc,ends_loc)
@@ -228,6 +235,8 @@ insert into Rental(customer_id,vin,start_date,end_date,verification_number,start
 (4,'2134I67O09234H654','11-04-2010','11-11-2010',200110,3,1),
 (5,'2134P67S90356R789','10-10-2010','10-20-2010',200111,2,3),
 (7,'3214Y76P80456F780','04-08-2010','04-30-2010',200112,1,2);
+
+select * from Payment
 
 go
 CREATE TRIGGER insertretail
