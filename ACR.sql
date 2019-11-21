@@ -96,8 +96,8 @@ create table PhoneNumber(
 create table Rental(
 	rental_id int IDENTITY(1,1) Primary Key,
 	vin varchar(7) NOT NULL,
-	start_date date not null default getdate(),
-	end_date date,
+	start_date datetime not null default getdate(),
+	end_date datetime,
 	verification_number int NOT NULL,
 	starts_loc integer not null,
 	ends_loc integer 
@@ -132,9 +132,10 @@ values ('Maria', 'Papadopoulou', 'Thiseos 147, Athina', 6911111111, 10025),
 	   ('Marios', 'Athanasiadis', 'Makedonomachon 24, Florina', 6988888888, 10024),
 	   ('Athina', 'Mosxou', 'Agias Sofias 19, Drama', 6989898989, 10024),
 	   ('Nikos', 'Oikonomidis', 'Eparchiaki odos Katapolon 19, Amorgos', 21567325,10027),
-	   ('Natalia', 'Karanasiou', 'Pezodromos Choras 63, Andros', 213143153, 10027)					
+	   ('Natalia', 'Karanasiou', 'Pezodromos Choras 63, Andros', 213143153, 10027),
+	   ('Katerina', 'Nikolaou', 'Trion Ierarxon 19, Athina', 676767676, 10025)					
 
-select *from Customer
+select *from Retail_Customer
 
 insert into Corporate_Customer(customer_id, AFM, discount_percent)
 values (1, 24254656576, 0.18),
@@ -149,17 +150,41 @@ values (4, '1974-12-01'),
 	   (6, '2000-03-21'),
 	   (8, '1994-01-01'),
 	   (10, '1984-05-29'),
-	   (11, '1982-10-15')
+	   (11, '1982-10-15'),
+	   (14, '1982-10-15')
 
 insert into Driver(first_name, last_name, dob, customer_id)
 values ('Thanasis', 'Dimitriou', '1994-03-07', 5),
 	   ('Marios', 'Anagnostou', '1992-02-01', 5),
 	   ('Eleni', 'Ioannou', '1998-06-24', 10),
-	   ('Chrysi', 'Galata', '1989-07-9', 8)
+	   ('Chrysi', 'Galata', '1989-07-9', 8);
 
-insert into Category(name, description)
-values ('')
+go
+CREATE TRIGGER insertretail
+on Retail_Customer 
+after insert
+as
+declare @id_to_insert integer
+set @id_to_insert = (select customer_id from inserted)
+begin
+if (@id_to_insert in (select customer_id from Corporate_Customer)) 
+	rollback transaction;
+end
 
+go
+CREATE TRIGGER insertcorporate
+on Corporate_Customer 
+after insert
+as
+declare @id_to_insert integer
+set @id_to_insert = (select customer_id from inserted)
+begin
+if (@id_to_insert in (select customer_id from Retail_Customer)) 
+	rollback transaction;
+end
+
+
+go
 use DB30
 select * from Location
 
