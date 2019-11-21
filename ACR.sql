@@ -95,19 +95,20 @@ create table PhoneNumber(
 
 create table Rental(
 rental_id int IDENTITY(1,1) Primary Key,
+customer_id int not null,
 vin char(17) NOT NULL,
 start_date date not null default getdate(),
 end_date date,
 verification_number int NOT NULL,
 starts_loc integer not null,
-ends_loc integer
+ends_loc integer,
+constraint custid foreign key (customer_id) references Customer(customer_id),
 constraint fkvin foreign key (vin) references Car(vin),
 constraint fkverifn foreign key (verification_number) references Payment(verification_number),
 constraint startsloc foreign key (starts_loc) references Location(loc_id),
 constraint endsloc foreign key (ends_loc) references Location(loc_id),
 constraint startenddate check (start_date < end_date)
 )
-
 
 /*INSERTS*/
 insert into Region(name, population, average_revenue)
@@ -202,6 +203,29 @@ insert into PhoneNumber Values
 (2107967894,4);
 
 select * from PhoneNumber;
+
+insert into Payment(cost,pdate,credit_card_number,cr_card_exp_date)
+ VALUES (1500,'06-27-2010',5678432,'07-26-2014'),
+                (220,'06-06-2010',234567,'12-27-2019'),
+                (100,'06-05-2010',6507850,'07-14-2012'),
+                (30,'06-24-2010',87536898,'09-06-2011'),
+                (500,'09-09-2010',3495098,'05-08-2013'),
+                (300,'06-15-2010',8900238,'06-07-2014'),
+                (700,'09-30-2010',903920,'06-08-2014'),
+                (2500,'07-12-2010',9709453,'04-12-2022');
+
+
+insert into Rental(customer_id,vin,start_date,end_date,verification_number,starts_loc,ends_loc)
+            VALUES(1,'1234K67G90785T380','06-01-2010','06-11-2010',200105,2,2),
+(4,'1234J67L00345I789','04-04-2010','04-14-2010',200106,2,2),
+(1,'1234K67G90785T380','08-08-2010','08-10-2010',200107,1,3),
+(3,'1234J67L00345I789','08-12-2010','08-13-2010',200108,2,2),
+(4,'1234J67L00345I789','04-08-2010','04-19-2010',200109,3,3),
+(8,'3214K67P90345D690', '05-09-2010','05-26-2010',200110,1,2),
+(4,'2134I67O09234H654','11-04-2010','11-11-2010',200110,3,1),
+(5,'2134P67S90356R789','10-10-2010','10-20-2010',200111,2,3),
+(7,'3214Y76P80456F780','04-08-2010','04-30-2010',200112,1,2);
+
 
 
 use DB30
