@@ -1,5 +1,5 @@
 create table Region(
-	reg_id integer identity(10024,1),
+	reg_id integer identity(10024,1) not null,
 	name varchar(100) not null,
 	population integer not null,
 	average_revenue real not null,
@@ -9,14 +9,14 @@ create table Region(
 )
 
 create table Customer(
-	customer_id integer identity(1,1),
+	customer_id integer identity(1,1) not null,
 	first_name varchar(100) not null,
 	last_name varchar(100) not null,
 	address varchar(150) not null,
 	phonenumber bigint not null,
 	reg_id integer not null,
 	primary key(customer_id),
-	constraint fk_regid foreign key (reg_id) references Region(reg_id),
+	constraint fk_regid foreign key (reg_id) references Region(reg_id) on delete cascade,
 	constraint pos_phonenumber check (phonenumber > 0) 
 )
 
@@ -27,7 +27,7 @@ create table Corporate_Customer(
 	AFM bigint not null,
 	discount_percent real not null
 	primary key (customer_id),
-	constraint fk_custidcor foreign key (customer_id) references Customer(customer_id),
+	constraint fk_custidcor foreign key (customer_id) references Customer(customer_id) on delete cascade,
 	constraint pos_afm check (AFM > 0),
 	constraint pos_perc check (discount_percent >= 0) 
 )
@@ -36,7 +36,7 @@ create table Retail_Customer(
 	customer_id integer not null,
 	date_of_birth date not null,
 	primary key (customer_id),
-	constraint fk_custidret foreign key (customer_id) references Customer(customer_id)
+	constraint fk_custidret foreign key (customer_id) references Customer(customer_id) on delete cascade
 )
 
 create table Driver(
@@ -45,26 +45,26 @@ create table Driver(
 	dob date not null,
 	customer_id integer not null
 	primary key (first_name, last_name, customer_id)
-	constraint fk_custiddri foreign key (customer_id) references Retail_Customer(customer_id)
+	constraint fk_custiddri foreign key (customer_id) references Retail_Customer(customer_id) on delete cascade
 )
 create table Category(
-	cat_id int IDENTITY(1,1) Primary Key,
+	cat_id int IDENTITY(1,1) Primary Key not null,
 	name varchar(255) not null,
 	description varchar (255) not null
 )
 
 create table Car(
-	vin char(17) Primary Key,
+	vin char(17) Primary Key not null,
 	manufacturer_company varchar(255) not null,
 	color varchar(255) not null,
 	model varchar(255) not null,
 	purchase_date date not null,
 	cat_id int NOT NULL
-	constraint fkcat_id foreign key (cat_id) references Category(cat_id)
+	constraint fkcat_id foreign key (cat_id) references Category(cat_id) on delete cascade
 )
 
 create table Payment(
-	verification_number int IDENTITY(200104,1) Primary Key,
+	verification_number int IDENTITY(200104,1) Primary Key not null,
 	cost float(24) not null,
 	pdate date not null,
 	credit_card_number int not null,
@@ -75,7 +75,7 @@ create table Payment(
 
 
 create table Location(
-	loc_id integer identity(1,1),
+	loc_id integer identity(1,1) not null,
 	man_fname varchar(50) not null,
 	man_lname varchar(60) not null,
 	postal_code integer not null,
@@ -91,28 +91,28 @@ create table PhoneNumber(
 	phone bigint not null, 
 	loc_id integer not null
 	primary key(phone)
-	constraint fkloc_id foreign key (loc_id) references Location(loc_id),
+	constraint fkloc_id foreign key (loc_id) references Location(loc_id) on delete cascade,
 	constraint pos_phone check (phone > 0)
 )
 
 create table Rental(
-	rental_id int IDENTITY(1,1) Primary Key,
+	rental_id int IDENTITY(1,1) Primary Key not null,
 	customer_id int not null,
 	vin char(17) NOT NULL,
-	start_date datetime not null default getdate(),
-	end_date datetime,
+	start_date date not null default getdate(),
+	end_date date,
 	verification_number int unique NOT NULL,
 	starts_loc integer not null,
 	ends_loc integer 
-	constraint custid foreign key (customer_id) references Customer(customer_id),
-	constraint fkvin foreign key (vin) references Car(vin),
-	constraint fkverifn foreign key (verification_number) references Payment(verification_number),
-	constraint startsloc foreign key (starts_loc) references Location(loc_id),
+	constraint custid foreign key (customer_id) references Customer(customer_id) on delete cascade,
+	constraint fkvin foreign key (vin) references Car(vin) on delete cascade,
+	constraint fkverifn foreign key (verification_number) references Payment(verification_number) on delete cascade,
+	constraint startsloc foreign key (starts_loc) references Location(loc_id) on delete cascade,
 	constraint endsloc foreign key (ends_loc) references Location(loc_id),
 	constraint startenddate check (start_date < end_date)
 )
 
-delete from customer where customer_id = 1
+
 
 /*INSERTS*/
 insert into Region(name, population, average_revenue)
@@ -178,10 +178,10 @@ select * from Category;
 
 insert into Car Values
 ('1234K67G90785T380', 'Toyota','Green','Toyota iQ', '2003-07-07',1),
-('1234J67L00345I789', 'Smart' , 'Red', 'Smart ForTwo', '2010-01-13',1),
+('1234J67L00345I789', 'Smart' , 'Red', 'Smart ForTwo', '2010-01-01',1),
 ('2134P67S90356R789', 'Volkswagen', 'Blue', 'Volkswagen Golf', '2009-08-04',2),
 ('2134I67O09234H654', 'Ford', 'White', 'Ford Focus', '2005-05-21', 2),
-('2134P57B98894F748', 'Audi', 'Black', 'Audi A3', '2010-03-27' ,2),
+('2134P57B98894F748', 'Audi', 'Black', 'Audi A3', '2010-01-01' ,2),
 ('3214K67P90345D690', 'Mazda', 'Red', 'Mazda MX-5', '2004-11-17' ,3),
 ('3214Y76P80456F780', 'BMW', 'Blue', 'BMW Z4', '2008-09-29' ,3),
 ('3215U89L90345G460', 'Mercedes-Benz', 'Black','Mercedes-Benz SLK', '2006-06-15',3),
@@ -214,27 +214,26 @@ insert into PhoneNumber Values
 select * from PhoneNumber;
 
 insert into Payment(cost,pdate,credit_card_number,cr_card_exp_date)
- VALUES (1500,'06-27-2010',5678432,'07-26-2014'),
-                (220,'06-06-2010',234567,'12-27-2019'),
-                (100,'06-05-2010',6507850,'07-14-2012'),
-                (30,'06-24-2010',87536898,'09-06-2011'),
-                (500,'09-09-2010',3495098,'05-08-2013'),
-                (300,'06-15-2010',8900238,'06-07-2014'),
-                (700,'09-30-2010',903920,'06-08-2014'),
-                (2500,'07-12-2010',9709453,'04-12-2022'),
-				(170.8, '09-09-2014', 9667878, '17-12-2018');
+ VALUES (1500,'2010-07-06',5678432,'2014-07-26'),
+                (220,'2010-06-06',234567,'2019-12-27'),
+                (100,'2010-06-05',6507850,'2012-07-14'),
+                (30,'2010-06-24',87536898,'2011-09-06'),
+                (500,'2010-09-09',3495098,'2013-05-08'),
+                (300,'2010-06-15',8900238,'2014-06-07'),
+                (700,'2010-09-30',903920,'2014-06-08'),
+                (2500,'2010-12-07',9709453,'2022-12-04'),
+				(170.8, '2014-09-09', 9667878, '2018-12-17');
 
 
 insert into Rental(customer_id,vin,start_date,end_date,verification_number,starts_loc,ends_loc)
-            VALUES(1,'1234K67G90785T380','06-01-2010','06-11-2010',200105,2,2),
-(4,'1234J67L00345I789','04-04-2010','04-14-2010',200106,2,2),
-(1,'1234K67G90785T380','08-08-2010','08-10-2010',200107,1,3),
-(3,'1234J67L00345I789','08-12-2010','08-13-2010',200108,2,2),
-(4,'1234J67L00345I789','04-08-2010','04-19-2010',200109,3,3),
-(8,'3214K67P90345D690', '05-09-2010','05-26-2010',200110,1,2),
-(4,'2134I67O09234H654','11-04-2010','11-11-2010',200110,3,1),
-(5,'2134P67S90356R789','10-10-2010','10-20-2010',200111,2,3),
-(7,'3214Y76P80456F780','04-08-2010','04-30-2010',200112,1,2);
+            VALUES(1,'1234K67G90785T380','2010-01-06','2010-11-06',200105,2,2),
+(4,'1234J67L00345I789','2010-04-04','2010-04-14',200106,2,2),
+(1,'1234K67G90785T380','2010-08-08','2010-08-10',200107,1,3),
+(3,'1234J67L00345I789','2010-08-12','2010-08-13',200108,2,2),
+(4,'1234J67L00345I789','2010-04-08','2010-04-19',200109,3,3),
+(8,'3214K67P90345D690', '2010-05-09','2010-05-26',200110,1,2),
+(5,'2134P67S90356R789','2010-10-10','2010-10-20',200111,2,3),
+(7,'3214Y76P80456F780','2010-04-08','2010-04-30',200112,1,2);
 
 select * from Payment
 
