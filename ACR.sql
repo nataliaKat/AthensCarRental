@@ -1,3 +1,19 @@
+
+use DB30;
+/*
+drop table Rental;
+drop table PhoneNumber;
+drop table Location;
+drop table Payment;
+drop table Car;
+drop table Category;
+drop table Driver;
+drop table Retail_Customer;
+drop table Corporate_Customer;
+drop table Customer;
+drop table Region;
+*/
+
 create table Region(
 	reg_id integer identity(10024,1) not null,
 	name varchar(100) not null,
@@ -112,8 +128,6 @@ create table Rental(
 	constraint startenddate check (start_date < end_date)
 )
 
-
-
 /*INSERTS*/
 insert into Region(name, population, average_revenue)
 values /*('Thrace', 101856, 6300),*/
@@ -140,8 +154,6 @@ values ('Maria', 'Papadopoulou', 'Thiseos 147, Athina', 6911111111, 10025),
 	   ('Natalia', 'Karanasiou', 'Pezodromos Choras 63, Andros', 213143153, 10027),
 	   ('Katerina', 'Nikolaou', 'Trion Ierarxon 19, Athina', 676767676, 10025)					
 
-select *from Retail_Customer
-
 insert into Corporate_Customer(customer_id, AFM, discount_percent)
 values (1, 24254656576, 0.18),
 	   (3, 34343434343, 0.2),
@@ -164,17 +176,12 @@ values ('Thanasis', 'Dimitriou', '1994-03-07', 5),
 	   ('Eleni', 'Ioannou', '1998-06-24', 10),
 	   ('Chrysi', 'Galata', '1989-07-9', 8);
 
-
-
-
 insert into Category(name,description) Values
 ('Micro Car','The smallest car'),
 ('Hatchback','For Families'),
 ('Cabrio','Cars witout roof'),
 ('Coupe','Sport Cars with rear roofline and two doors'),
 ('SUV','Sports Utility Vehide');
-
-select * from Category;
 
 insert into Car Values
 ('1234K67G90785T380', 'Toyota','Green','Toyota iQ', '2003-07-07',1),
@@ -191,15 +198,11 @@ insert into Car Values
 ('5875Y78U78900H890', 'Porsche', 'Black', 'Porsche Cayenne', '2003-08-17' ,5),
 ('5890U78Y89856P759', 'Land Rover','Black','Land Rover Range Rover', '2002-07-07',5);
 
-Select * from Car;
-
 insert into Location(man_fname,man_lname,postal_code,street_name,street_number,city) Values
 ('Maria', 'Papa', 50219, 'Fillipou', '28' ,'Pella'),
 ('Manos', 'Petrou', 10671, 'Akadimias', '145', 'Athina'),
 ('Athanasios' , 'Makris', 84500 ,'Pavlou Mela', '34' , 'Andros'),
 ('Anna', 'Sali', 10671, 'Skoufa', '28' ,'Athina');
-
-select * from Location;
 
 insert into PhoneNumber Values
 (2384067345,1),
@@ -210,8 +213,6 @@ insert into PhoneNumber Values
 (2751000097,3),
 (2107956734,4),
 (2107967894,4);
-
-select * from PhoneNumber;
 
 insert into Payment(cost,pdate,credit_card_number,cr_card_exp_date)
  VALUES (1500,'2010-07-06',5678432,'2014-07-26'),
@@ -235,7 +236,6 @@ insert into Rental(customer_id,vin,start_date,end_date,verification_number,start
 (5,'2134P67S90356R789','2010-10-10','2010-10-20',200111,2,3),
 (7,'3214Y76P80456F780','2010-04-08','2010-04-30',200112,1,2);
 
-select * from Payment
 
 go
 CREATE TRIGGER insertretail
@@ -250,6 +250,7 @@ if (@id_to_insert in (select customer_id from Corporate_Customer))
 end
 
 go
+
 CREATE TRIGGER insertcorporate
 on Corporate_Customer 
 after insert
@@ -263,18 +264,3 @@ end
 
 
 go
-
-use DB30
-select * from Location;
-
-drop table Rental;
-drop table PhoneNumber;
-drop table Location;
-drop table Payment;
-drop table Car;
-drop table Category;
-drop table Driver;
-drop table Retail_Customer;
-drop table Corporate_Customer;
-drop table Customer;
-drop table Region;
