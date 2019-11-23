@@ -130,15 +130,10 @@ create table Rental(
 
 /*INSERTS*/
 insert into Region(name, population, average_revenue)
-values /*('Thrace', 101856, 6300),*/
-	   ('Macedonia', 2487447, 8110),
-	   /*('Epirus', 336856, 7150),
-	   ('Thessaly', 732762, 8219),*/
+values ('Macedonia', 2487447, 8110),
 	   ('Sterea Ellada', 5039516, 9750),
 	   ('Peloponnese', 1086935, 8610),
-	   /*('Ionian Islands', 207855, 7654),*/
 	   ('Aegean Islands', 503697, 7144)
-	   /*('Crete', 533506, 8153)*/
 
 insert into Customer(first_name, last_name, address, phonenumber, reg_id) 
 values ('Maria', 'Papadopoulou', 'Thiseos 147, Athina', 6911111111, 10025),
