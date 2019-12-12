@@ -257,5 +257,3 @@ if (@id_to_insert in (select customer_id from Retail_Customer))
 	rollback transaction;
 end
 
-
-go
