@@ -133,13 +133,8 @@ group by Avg_Month.month;
 
 /* 14) Για κάθε μήνα του 2010, δείξε τη μέση χρονική διάρκεια ενοικίασης (σε ημέρες).
 	   Θεωρείστε ότι μία ενοικίαση ανοίκει στο μήνα εκείνο στον οποίο αρχίζει.*/
-go
-create view Dur(month, duration) as
-select month(start_date), datediff(day, start_date, end_date)
+select month(start_date) as month, avg(datediff(day, start_date, end_date)) as average
 from Rental
-where year(start_date) = 2010;
+group by month(start_date);
 
-select month, avg(duration) as average
-from Dur
-group by month;
 
