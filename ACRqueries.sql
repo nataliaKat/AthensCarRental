@@ -52,15 +52,9 @@ select customer_id
 from June_rentals
 where number_of_rentals > 4 and average_june > 150;
 
+drop view June_rentals;
 /* 9) Χρησιμοποιώντας εμφωλευμένα υποερωτήματα, δείξτε τον κωδικό και το ονοματεπώνυμο των πελατών που έχουν
       κάνει συνολικές πληρωμές τον Απρίλιο του 2010 πάνω από 1500€. */
-select Customer.customer_id, first_name, last_name 
-from (select customer_id, sum(cost) as total
-	  from Rental, Payment
-	  where Rental.verification_number = Payment.verification_number and month(pdate) = 4 and year(pdate) = 2010
-	  group by customer_id) as April_payments, Customer
-where Customer.customer_id = April_payments.customer_id;
-
 Select customer_id, first_name, last_name
 from Customer
 Where 150 < (Select Sum(cost)
@@ -80,6 +74,8 @@ from Payment, Rental, Car, SumCost
 where Payment.verification_number = Rental.verification_number and Car.vin = Rental.vin 
 group by cat_id, total;
 
+
+drop view SumCost;
 /* 11) Για κάθε μήνα του 2010, σύγκρινς τις συνολικές πληρωμές του μήνα με αυτές του αντίστοιχου μήνα του 2010 (σαν ποσοστό). */
 go
 create view Payments10(month, total) as
@@ -102,6 +98,9 @@ select Payments11.month, ((Payments11.total - Payments10.total) / Payments10.tot
 from Payments11
 left outer join Payments10 on Payments10.month = Payments11.month;
 
+
+drop view Payments10
+drop view Payments11;
 /* 12) Δείξε τους κωδικούς των γεωγραφικών διαμερισμάτων που είχαν μέση αξία ενοικίασης μεγαλύτερη
 	   από τη συνολική μέση αξία ενοικίασης. */
 select reg_id
@@ -126,15 +125,15 @@ from Rental, Payment
 where Rental.verification_number = Payment.verification_number
 group by customer_id, month(pdate);
 
-select count(customer_id), Avg_Month.month
+select count(customer_id) as customers, Avg_Month.month
 from AvgCustMonth, Avg_Month
 where Avg_Month.month = AvgCustMonth.month and AvgCustMonth.average > Avg_Month.average
 group by Avg_Month.month;
+
+drop view Avg_Month, AvgCustMonth
 
 /* 14) Για κάθε μήνα του 2010, δείξε τη μέση χρονική διάρκεια ενοικίασης (σε ημέρες).
 	   Θεωρείστε ότι μία ενοικίαση ανοίκει στο μήνα εκείνο στον οποίο αρχίζει.*/
 select month(start_date) as month, avg(datediff(day, start_date, end_date)) as average
 from Rental
 group by month(start_date);
-
-
