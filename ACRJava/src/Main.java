@@ -15,6 +15,13 @@ public class Main {
 			return;
 		}
 		dao.printRentalsPerCustomer(id);
+            	 try {
+                        id = in.nextInt();
+                } catch (InputMismatchException e) {
+                        System.out.println("I expected a number");
+                        return;
+                }
+		dao.deleteRental(id);
 	}
 
 }
