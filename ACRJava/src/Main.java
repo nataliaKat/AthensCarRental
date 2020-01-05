@@ -5,7 +5,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		Dao dao = new Dao();
-		System.out.print("Enter customer id");
+		System.out.print("Enter customer id: ");
 		Scanner in = new Scanner(System.in);
 		int id;
 		try {
@@ -15,12 +15,13 @@ public class Main {
 			return;
 		}
 		dao.printRentalsPerCustomer(id);
-            	 try {
-                        id = in.nextInt();
-                } catch (InputMismatchException e) {
-                        System.out.println("I expected a number");
-                        return;
-                }
+		System.out.println("Enter rental id: ");
+        try {
+			id = in.nextInt();
+            } catch (InputMismatchException e) {
+				System.out.println("I expected a number");
+				return;
+            }
 		dao.deleteRental(id);
 	}
 
