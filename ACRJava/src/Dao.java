@@ -82,4 +82,18 @@ public class Dao {
         }
 
     }
+
+    public void deletePayment(int paymentId) {
+	String query = "DELETE FROM Payment WHERE verification_number=" + paymentId;
+	Statement st = null;
+	try {
+	st = getConnection().createStatement();
+	st.executeUpdate(query);
+	closeStatement(st);
+	} catch (SQLException e) {
+	e.printStackTrace();
+	}
+
+}
+
 }
