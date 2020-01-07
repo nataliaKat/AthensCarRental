@@ -22,23 +22,24 @@ public class Main {
 			System.out.println("I expected a number");
 		    return;
 		}
-        System.out.println("Do you want to delete the corresponding payment?(y/n)?");
+        System.out.println("Do you want to delete the corresponding payment if found?(y/n)?");
         String answer = in.next();
         if (answer.toLowerCase().charAt(0) == 'y') {
-        	 deletePaymentAndRental(id); 
-        } else if (answer.toLowerCase().charAt(0) == 'n') {
-        	dao.deleteRental(id);
-        } else {
+			checkAndDeletePayment(id); 
+        } else if (answer.toLowerCase().charAt(0) != 'n') {
         	System.out.println("Cannot understand you");
-        }
+        	return;
+        }        	
+		dao.deleteRental(id);
+
+        
 	}
 	
-	private static void deletePaymentAndRental(long rentId) {
+	private static void checkAndDeletePayment(long rentId) {
 		Dao dao = new Dao();
 		long paymId = dao.getVerificationNumber(rentId);
 		if (paymId != -1) {
 			dao.deletePayment(paymId);
-			dao.deleteRental(rentId);
 		} else {
 			System.out.println("Payment not found");
 		}
