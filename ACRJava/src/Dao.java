@@ -30,14 +30,14 @@ public class Dao {
 	}
 
 	private void closeStatement(Statement st) {
-        try {
-            if (st != null) {
-                st.close();
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
+		try {
+			if (st != null) {
+				st.close();
+			}
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+	}
 
 	public void printRentalsPerCustomer(long customerId) {
 		String query = "SELECT rental_id, start_date, end_date, starts_loc, ends_loc, cost FROM Rental, Payment WHERE Rental.verification_number = Payment.verification_number AND year(start_date) <= 2005 AND year(end_date) >= 2005 AND customer_id = "
@@ -69,16 +69,48 @@ public class Dao {
 		}
 	}
 
-	public void deleteRental(int rentalId) {
-        String query = "DELETE FROM Rental WHERE rental_id=" + rentalId;
-        Statement st = null;
-        try {
-            st = getConnection().createStatement();
-            st.executeUpdate(query);
-            closeStatement(st);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+	public void deleteRental(long rentalId) {
+		String query = "DELETE FROM Rental WHERE rental_id=" + rentalId;
+		Statement st = null;
+		try {
+			st = getConnection().createStatement();
+			st.executeUpdate(query);
+			closeStatement(st);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-    }
+	}
+
+	public long getVerificationNumber(long rentalId) {
+		String query = "SELECT verification_number FROM Rental WHERE rental_id = " + rentalId;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			st = getConnection().createStatement();
+			rs = st.executeQuery(query);
+			if (rs.next()) {
+				return rs.getLong("verification_number");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeStatementAndResultSet(rs, st);
+		}
+		return -1;
+	}
+
+	public void deletePayment(long paymentId) {
+		String query = "DELETE FROM Payment WHERE verification_number=" + paymentId;
+		Statement st = null;
+		try {
+			st = getConnection().createStatement();
+			st.executeUpdate(query);
+			closeStatement(st);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 }
